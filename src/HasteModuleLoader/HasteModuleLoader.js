@@ -483,6 +483,21 @@ Loader.prototype._moduleNameToPath = function(currPath, moduleName) {
 };
 
 Loader.prototype._nodeModuleNameToPath = function(currPath, moduleName) {
+
+  // Check if file path exists in moduleDirectories
+  var moduleDirectories = this._moduleDirectories;
+
+  var i;
+
+  for (i = 0; i < moduleDirectories.length; i++) {
+    var otherModulePath = path.resolve(moduleDirectories[i], moduleName);
+
+    if (fs.existsSync(otherModulePath) &&
+        fs.statSync(otherModulePath).isFile()) {
+      return otherModulePath;
+    }
+  }
+
   // Handle module names like require('jest/lib/util')
   var subModulePath = null;
   var moduleProjectPart = moduleName;
